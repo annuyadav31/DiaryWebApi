@@ -33,6 +33,41 @@ namespace webApi.Controllers
             return Ok(list);
         }
 
+        [HttpGet]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> GetEntry([FromRoute] Guid id)
+        {
+            var entry = await _context.DiaryEntries.FindAsync(id);
+            if(entry == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(entry);
+            }
+        }
+
+        [HttpPut]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> UpdateEntry([FromRoute] Guid id, DiaryEntry diaryEntry)
+        {
+            var entry = await _context.DiaryEntries.FindAsync(id);
+            if (entry == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                entry.Title = diaryEntry.Title;
+                entry.CreationTime = diaryEntry.CreationTime;
+                entry.Content = diaryEntry.Content;
+
+                await _context.SaveChangesAsync();
+                return Ok(entry);
+            }
+        }
+
         [HttpDelete]
         [Route("{id:Guid}")]
         public async Task<IActionResult> DeleteEntry([FromRoute] Guid id)
